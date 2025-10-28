@@ -1,0 +1,13 @@
+{
+    "name": "zahra-rafiei-todo",
+    "version": "1.0.0",
+    "description": "A simple To-Do app backend using Express.js",
+    "main": "app.js",
+    "scripts": {
+        "start": "node app.js"
+    },
+    "dependencies": {
+        "express": "^4.21.2",
+        "morgan": "^1.10.1"
+    }
+}

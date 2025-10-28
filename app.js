@@ -12,10 +12,10 @@ app.use(morgan('dev'));
 
 // CORS for GitHub Pages frontend
 app.use(cors({
-  origin: 'https://melodiw82.github.io', 
-  methods: ['GET','POST','PUT','DELETE'],
-  credentials: true
-}));
+    origin: '*',          // allow all domains
+    methods: ['GET','POST','PUT','DELETE','OPTIONS'],
+    allowedHeaders: ['Content-Type']
+  }));
 
 // Serve static files (CSS/JS) from current folder
 app.use(express.static(path.join(__dirname)));

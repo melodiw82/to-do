@@ -1,4 +1,4 @@
-# Zahra Rafiei To-Do App
+# To-Do App
 
 A dynamic, aesthetic, and fully functional To-Do List Web Application built with **HTML/CSS/JS frontend** and a **Node.js + Express backend**.
 

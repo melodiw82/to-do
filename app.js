@@ -1,14 +1,29 @@
 const express = require('express');
 const path = require('path');
 const morgan = require('morgan');
+const cors = require('cors');
 const todosRouter = require('./routes/todos');
 
 const app = express();
 
 // Middleware
 app.use(express.json());
-app.use(morgan('dev')); // Logging
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(morgan('dev'));
+
+// CORS for GitHub Pages frontend
+app.use(cors({
+  origin: 'https://melodiw82.github.io', 
+  methods: ['GET','POST','PUT','DELETE'],
+  credentials: true
+}));
+
+// Serve static files (CSS/JS) from current folder
+app.use(express.static(path.join(__dirname)));
+
+// Serve index.html from root for /
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'index.html'));
+});
 
 // Routes
 app.use('/api/todos', todosRouter);

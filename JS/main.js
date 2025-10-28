@@ -1,7 +1,5 @@
 // Detect production API URL or local API
-const API_URL = window.location.hostname.includes('github.io') 
-  ? 'https://to-do-production-6811.up.railway.app/api/todos' 
-  : '/api/todos';
+const API_URL = 'https://to-do-production-6811.up.railway.app/api/todos';
 
 // Selectors
 const toDoInput = document.querySelector('.todo-input');

@@ -3,7 +3,7 @@ const express = require('express');
 const path = require('path');
 const morgan = require('morgan');
 const cors = require('cors');
-const { createClient } = require("redis");
+const { MongoClient } = require("mongodb");
 
 const todosRouter = require('./routes/todos');
 
@@ -21,17 +21,17 @@ app.use(cors({
     allowedHeaders: ['Content-Type']
   }));
 
-// ------- Redis Connection -------
-const client = createClient({ url: process.env.REDIS_URL });
-
-client.on("error", err => console.error("Redis error:", err));
+// ------- MongoDB Connection -------
+let db;
+const client = new MongoClient(process.env.MONGODB_URI);
 
 async function start() {
   await client.connect();
-  console.log("Connected to Redis");
+  db = client.db(process.env.DB_NAME);
+  console.log("Connected to MongoDB Atlas");
 
-  // Pass redis client to routes
-  app.use('/api/todos', todosRouter(client));
+  // Pass db client to routes
+  app.use('/api/todos', todosRouter(db));
 
   // Serve static files (CSS/JS) from current folder
   app.use(express.static(path.join(__dirname)));

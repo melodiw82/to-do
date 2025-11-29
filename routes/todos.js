@@ -1,17 +1,13 @@
 const express = require('express');
+const { ObjectId } = require('mongodb');
 
-function createTodosRouter(client) {
+function createTodosRouter(db) {
   const router = express.Router();
+  const todosCollection = db.collection('todos');
 
   // GET all todos
   router.get('/', async (req, res) => {
-    const ids = await client.lRange("todo:ids", 0, -1);
-
-    const todos = [];
-    for (const id of ids) {
-      const data = await client.get(`todo:${id}`);
-      if (data) todos.push(JSON.parse(data));
-    }
+    const todos = await todosCollection.find().toArray();
     res.json(todos);
   });
 
@@ -22,52 +18,37 @@ function createTodosRouter(client) {
       return res.status(400).json({ error: 'Todo text is required' });
     }
 
-    // Auto-increment ID
-    const id = await client.incr("todo:id");
-
     const todo = {
-      id,
       text: text.trim(),
       done: false,
-      createdAt: new Date().toISOString(),
+      createdAt: new Date()
     };
-
-    // Save todo and its ID reference
-    await client.set(`todo:${id}`, JSON.stringify(todo));
-    await client.rPush("todo:ids", id.toString());
-
-    res.status(201).json(todo);
+    
+    const result = await todosCollection.insertOne(todo);
+    res.status(201).json({_id: result.insertedId, ...todo});
   });
 
   // PUT: toggle todo done/undone
   router.put('/:id', async (req, res) => {
-    const id = req.params.id;
-    const oldTodo = await client.get(`todo:${id}`);
-
-    if (!oldTodo) return res.status(404).json({ error: "Todo not found" });
-
     const { text, done } = req.body;
-    const updated = {
-      ...JSON.parse(oldTodo),
-      text,
-      done,
-    };
+    
+    const result = await todosCollection.findOneAndUpdate(
+      { _id: new ObjectId(req.params.id) },
+      { $set: { text, done } },
+      { returnDocument: 'after' }
+    );
 
-    await client.set(`todo:${id}`, JSON.stringify(updated));
-
-    res.json(updated);
+    if (!result.value) return res.status(404).json({ error: 'Todo not found' });
+    res.json(result.value);
   });
 
   // DELETE: remove todo
   router.delete('/:id', async (req, res) => {
-    const id = req.params.id;
+    const result = await todosCollection.deleteOne({ _id: new ObjectId(req.params.id) });
 
-    const deleted = await client.del(`todo:${id}`);
-    if (deleted === 0)
-      return res.status(404).json({ error: "Todo not found" });
-
-    await client.lRem("todo:ids", 1, id);
-
+    if (result.deletedCount === 0) {
+      return res.status(404).json({ error: 'Todo not found' });
+    }
     res.status(204).end();
   });
 

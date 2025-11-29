@@ -1,6 +1,6 @@
 # Performance Comparison: Redis vs. MongoDB Atlas
 
-**Author:** [Your Name]
+**Author:** Zahra Rafiei
 **Date:** November 29, 2025
 
 ---

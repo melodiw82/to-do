@@ -10,6 +10,10 @@ You can access and use the To-Do app using the public link below:
 
 [Open To-Do App Github Pages](https://melodiw82.github.io/to-do/)
 
+Note: 
+Backend for to-do app is hosted on Railway.com. If site is none-responsive, let the dev know.
+
+![Demo](https://raw.githubusercontent.com/melodiw82/to-do/main/demo.png)
 
 Good luck :>
 ---
